@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Qlite Web</title>
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" type="text/css" href="deps/toastr/toastr.min.css">
+
+    <script type="text/javascript" src="deps/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="deps/md5/md5.min.js"></script>
+	<script type="text/javascript" src="deps/toastr/toastr.min.js"></script>
+	<script type="text/javascript" src="deps/identicon.js/pnglib.js"></script>
+	<script type="text/javascript" src="deps/identicon.js/identicon.js"></script>
+    <script type="text/javascript" src="deps/qlite.js/qlite.js"></script>
+
+	<link rel="shortcut icon" type="image/x-icon" href="imgs/favicon.ico">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta charset="UTF-8"> 
+</head>
+<body>
+<nav>
+	<div id="logo"></div>
+	<ul>
+		<li onclick="$('#page_dashboard').removeClass('hidden');$('#page_qapp_list').addClass('hidden');">Dashboard</li>
+		<a onclick="$('#page_dashboard').addClass('hidden');$('#page_qapp_list').removeClass('hidden');"><li>qApps</li></a>
+	</ul>
+</nav>
+
+<div id='page_dashboard'>
+<header>
+	<div class="suptext">Qlite Web</div>
+	<div class="subtext">the web interface for your ql-node</div>
+</header>
+
+<div class="window_container hidden" id="window_cn">
+	<div class="window">
+		<div class="window_head">
+			<div class="window_name">change node</div>
+			<div class="window_close" onclick="$(this).closest('.window_container').addClass('hidden')"></div>
+		</div>
+		<div class="window_body">
+			<form>
+				<input type="text" placeholder="http://node.example.org:14265" id="form_cn_node_address" class="big" />
+				<div class="checkbox_container"><input type="checkbox" id="form_cn_is_testnet" /><label>testnet</label></div>
+				<input type="button" value="change node" onclick="change_node();" />
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="window_container hidden" id="window_oc">
+	<div class="window">
+		<div class="window_head">
+			<div class="window_name">create oracle</div>
+			<div class="window_close" onclick="$(this).closest('.window_container').addClass('hidden')"></div>
+		</div>
+		<div class="window_body">
+			<form>
+				<input type="text" placeholder="qubic ID" id="form_oc_qubic_id" class="big" />
+				<input type="button" value="create oracle" onclick="oracle_create();" />
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="window_container hidden" id="window_qc">
+	<div class="window">
+		<div class="window_head">
+			<div class="window_name">create qubic</div>
+			<div class="window_close" onclick="$(this).closest('.window_container').addClass('hidden')"></div>
+		</div>
+		<div class="window_body">
+			<form>
+				<details><summary>advanced configurations (optional)</summary>
+					<div class="input_line">
+						<input type="number" placeholder="execution start (unix timestamp or seconds)"    id="form_qc_execution_start" />
+						<input type="number" placeholder="qlvm runtime limit per epoch (in seconds)"          id="form_qc_runtime_limit" />
+					</div>
+					<div class="input_line">
+						<input type="number" placeholder="hash period duration (in seconds)"   id="form_qc_hash_period_duration" />
+						<input type="number" placeholder="result period duration (in seconds)" id="form_qc_result_period_duration" />
+					</div>
+				</details>
+				<textarea placeholder="ql code (documentation on qubiclite.org/doc)" spellcheck="false" id="form_qc_code"></textarea>
+				<input type="button" value="create qubic" onclick="qubic_create();" />
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="window_container hidden" id="window_qt">
+	<div class="window">
+		<div class="window_head">
+			<div class="window_name">test ql code</div>
+			<div class="window_close" onclick="$(this).closest('.window_container').addClass('hidden')"></div>
+		</div>
+		<div class="window_body">
+			<form>
+				<input type="number" placeholder="epoch (optional)" id="form_qt_epoch">
+				<textarea placeholder="ql code (documentation on qubiclite.org/doc)" spellcheck="false" id="form_qt_code"></textarea>
+				<input type="button" value="test ql code" onclick="qubic_test();" />
+			</form>
+			<div class="box code"></div>
+		</div>
+	</div>
+</div>
+
+<div class="window_container hidden" id="window_qla">
+	<div class="window">
+		<div class="window_head">
+			<div class="window_name">manage applications</div>
+			<div class="window_close" onclick="$(this).closest('.window_container').addClass('hidden')"></div>
+		</div>
+		<div class="window_body">
+			<form>
+				<input type="text" disabled id="form_qla_qubic_id" class="big" />
+				<p>This qubic received <label id="application_amount">0</label> application(s).</p>
+				<div class="scroll" id="assembly_list"></div>
+				<input type="button" value="assemble" onclick="qubic_assemble();" />
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="window_container hidden" id="window_il">
+	<div class="window">
+		<div class="window_head">
+			<div class="window_name">your iam streams</div>
+			<div class="window_close" onclick="$(this).closest('.window_container').addClass('hidden')"></div>
+		</div>
+		<div class="window_body">
+			<p>You own <label id="iam_stream_amount">0</label> iam stream(s).</p>
+			<div class="scroll"></div>
+			<form>
+				<input type="button" value="new" onclick="iam_create();" />
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="window_container hidden" id="window_fe">
+	<div class="window">
+		<div class="window_head">
+			<div class="window_name">fetch epoch(s)</div>
+			<div class="window_close" onclick="$(this).closest('.window_container').addClass('hidden')"></div>
+		</div>
+		<div class="window_body">
+			<form>
+				<input type="text" placeholder="qubic id" id="form_fe_qubic_id" class="big" />
+				<div class="input_line">
+					<input type="number" placeholder="epoch" id="form_fe_min_epoch" />
+					<input type="number" placeholder="max epoch (optional)" id="form_fe_max_epoch" />
+				</div>
+				<input type="button" value="fetch epoch(s)" onclick="fetch_epoch();" />
+			</form>
+			<div class="scroll"></div>
+		</div>
+	</div>
+</div>
+
+<div class="window_container hidden" id="window_ir">
+	<div class="window">
+		<div class="window_head">
+			<div class="window_name">read from iam stream</div>
+			<div class="window_close" onclick="$(this).closest('.window_container').addClass('hidden')"></div>
+		</div>
+		<div class="window_body">
+			<form>
+				<input type="text" placeholder="iam stream id" id="form_ir_iam_id" class="big" />
+				<input type="number" placeholder="index" id="form_ir_index" />
+				<input type="button" value="read from stream" onclick="iam_read();" />
+			</form>
+			<div class="box code"></div>
+		</div>
+	</div>
+</div>
+
+<div class="window_container hidden" id="window_iw">
+	<div class="window">
+		<div class="window_head">
+			<div class="window_name">write to iam stream</div>
+			<div class="window_close" onclick="$(this).closest('.window_container').addClass('hidden')"></div>
+		</div>
+		<div class="window_body">
+			<form>
+				<input type="text" disabled id="form_iw_iam_id" class="big" />
+				<input type="number" placeholder="index" id="form_iw_index" />
+				<textarea id="form_iw_message" placeholder="message (json object)"></textarea>
+				<input type="button" value="write to stream" onclick="iam_write();" />
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="window_container hidden" id="window_qr">
+    <div class="window">
+        <div class="window_head">
+            <div class="window_name">read qubic details</div>
+            <div class="window_close" onclick="$(this).closest('.window_container').addClass('hidden')"></div>
+        </div>
+        <div class="window_body">
+            <form>
+                <input type="text" placeholder="qubic id" id="form_qr_qubic_id" class="big" />>
+                <input type="button" value="read details" onclick="qubic_read();" />
+            </form>
+            <div class="box code"></div>
+        </div>
+    </div>
+</div>
+
+<div class="window_container hidden" id="window_ex">
+    <div class="window">
+        <div class="window_head">
+            <div class="window_name">export</div>
+            <div class="window_close" onclick="close_window('ex');"></div>
+        </div>
+        <div class="window_body">
+            <div class="box code" style="white-space: pre-wrap;"></div>
+            <input type="button" value="copy" onclick="close_window('ex');copy_to_clipboard($('#window_ex .box').html());" />
+        </div>
+    </div>
+</div>
+
+<div class="window_container hidden" id="window_im">
+    <div class="window">
+        <div class="window_head">
+            <div class="window_name">import</div>
+            <div class="window_close" onclick="close_window('im');"></div>
+        </div>
+        <div class="window_body">
+            <form>
+                <textarea placeholder="encoded iam stream / qubic / oracle" id="form_im_encoded"></textarea>
+                <input type="button" value="import" onclick="entity_import();" />
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="content_container">
+<div id="content">
+    <div class="button" onclick="open_window('cn');">Change Node</div>
+	<div class="button" onclick="open_window('fe');">Fetch Epoch</div>
+	<div class="button" onclick="open_window('qr');">Qubic Details</div>
+	<div class="button" onclick="open_window('qt');">QL Code Test</div>
+	<div class="button" onclick="iam_list();open_window('il');">List IAM Streams</div>
+	<div class="button" onclick="open_window('ir');">Read IAM Stream</div>
+    <div class="button" onclick="open_window('im');">Import</div>
+
+	<br/>
+
+	<div id="qubic_view">
+		<div class="view_head">
+			<div class="view_name">Qubics</div>
+			<div class="reload_button" onclick="list_qubics();">&#x27F3;</div>
+            <div class="create_button" onclick="open_create_qubic_form();">+</div>
+		</div>
+		<div class="scroll"></div>
+	</div>
+
+	<div id="oracle_view">
+		<div class="view_head">
+			<div class="view_name">Oracles</div>
+			<div class="reload_button" onclick="list_oracles();">&#x27F3;</div>
+			<div class="create_button" onclick="open_create_oracle_form();">+</div>
+		</div>
+		<div class="scroll"></div>
+	</div>
+</div>
+</div>
+</div>
+
+<!-- ================================= -->
+
+<div id="page_qapp_list" class="hidden">
+
+<header>
+	<div class="suptext">your qApps</div>
+	<div class="subtext">experience the application layer of qubic lite</div>
+</header>
+
+<form id="install_app">
+	<div id="install_app_warning">do not install qApps from untrusted sources!</div>
+	<input type="url" placeholder="qapp url (e.g. http://qame.org/tanglefarm)" id="app_url">
+	<input type="button" value="install" onclick="install_app();">
+</form>
+<div id="qapps"></div>
+<script type="text/javascript">
+
+</script>
+
+	<!-- ================================= -->
+
+</div>
+<script type="text/javascript" src="js/actions.js"></script>
+
+<footer>
+	created by <a href="https://ecosystem.iota.org/users/microhash-7817/profile" target="_blank">microhash</a> for <a href="http://qubiclite.org" target="_blank">qubiclite.org</a>
+</footer>
+</body>
+</html>
