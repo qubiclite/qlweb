@@ -315,9 +315,9 @@ class _ParameterValidator {
         if (value !== parseInt(value, 10))
             throw new Error("parameter '"+par_name+"' is not an integer");
         if (value < min_value)
-            throw new Error("parameter '"+par_name+"' (= "+_parsed+") is less than allowed minimum: 9");
+            throw new Error("parameter '"+par_name+"' (= "+value+") is less than allowed minimum: 9");
         if (value > max_value)
-            throw new Error("parameter '"+par_name+"' (= "+_parsed+") is greater than allowed maximum: 14");
+            throw new Error("parameter '"+par_name+"' (= "+value+") is greater than allowed maximum: 14");
     }
 
     static validate_tryte_sequence(value, par_name, min_length, max_length) {

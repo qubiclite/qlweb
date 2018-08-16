@@ -54,6 +54,10 @@ list_oracles();
 list_qubics();
 }, 60000);
 
+window.onerror = function(err) {
+    toastr.error(err);
+};
+
 const registered_intervals = new Map();
 
 function register_interval(owner_id, func, timeout) {
