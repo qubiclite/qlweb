@@ -137,25 +137,45 @@
 	</div>
 </div>
 
-<div class="window_container hidden" id="window_fe">
-	<div class="window">
-		<div class="window_head">
-			<div class="window_name">fetch epoch(s)</div>
-			<div class="window_close" onclick="$(this).closest('.window_container').addClass('hidden')"></div>
-		</div>
-		<div class="window_body">
-			<form>
-				<input type="text" placeholder="qubic id" id="form_fe_qubic_id" class="big" />
-				<div class="input_line">
-					<input type="number" placeholder="epoch" id="form_fe_min_epoch" />
-					<input type="number" placeholder="max epoch (optional)" id="form_fe_max_epoch" />
-				</div>
-				<input type="button" value="fetch epoch(s)" onclick="fetch_epoch();" />
-			</form>
-			<div class="scroll"></div>
+	<div class="window_container hidden" id="window_fe">
+		<div class="window">
+			<div class="window_head">
+				<div class="window_name">fetch epoch(s)</div>
+				<div class="window_close" onclick="$(this).closest('.window_container').addClass('hidden')"></div>
+			</div>
+			<div class="window_body">
+				<form>
+					<input type="text" placeholder="qubic id" id="form_fe_qubic_id" class="big" />
+					<div class="input_line">
+						<input type="number" placeholder="epoch" id="form_fe_min_epoch" />
+						<input type="number" placeholder="max epoch (optional)" id="form_fe_max_epoch" />
+					</div>
+					<input type="button" value="fetch epoch(s)" onclick="fetch_epoch();" />
+				</form>
+				<div class="scroll"></div>
+			</div>
 		</div>
 	</div>
-</div>
+
+	<div class="window_container hidden" id="window_qco">
+		<div class="window">
+			<div class="window_head">
+				<div class="window_name">qubic consensus</div>
+				<div class="window_close" onclick="close_window('qco');"></div>
+			</div>
+			<div class="window_body">
+				<form>
+                    <input type="text" placeholder="qubic id" id="form_qco_qubic" class="big" />
+                    <div class="input_line">
+                        <input type="text" placeholder="iam index keyword" id="form_qco_keyword" />
+                        <input type="number" placeholder="iam index position" id="form_qco_position" />
+                    </div>
+					<input type="button" value="find consensus" onclick="qubic_consensus();" />
+				</form>
+				<div class="box code"></div>
+			</div>
+		</div>
+	</div>
 
 <div class="window_container hidden" id="window_ir">
 	<div class="window">
@@ -240,6 +260,7 @@
     <div class="button" onclick="open_window('cn');">Change Node</div>
 	<div class="button" onclick="open_window('fe');">Fetch Epoch</div>
 	<div class="button" onclick="open_window('qr');">Qubic Details</div>
+	<div class="button" onclick="open_window('qco');">Qubic Consensus</div>
 	<div class="button" onclick="open_window('qt');">QL Code Test</div>
 	<div class="button" onclick="iam_list();open_window('il');">List IAM Streams</div>
 	<div class="button" onclick="open_window('ir');">Read IAM Stream</div>

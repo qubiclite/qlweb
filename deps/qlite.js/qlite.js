@@ -48,6 +48,7 @@ class Qlite {
 
     // === COMMAND SPECIFIC FUNCTIONS (GENERATED FROM QLRI) ===
 
+
     /**
      * Changes the IOTA full node used to interact with the tangle.
      * @param {function} callback - function to call back, first parameter for return value (json object) in case of success, second parameter for error object in case of error
@@ -63,21 +64,21 @@ class Qlite {
     /**
      * Determines the quorum based result (consensus) of a qubic's epoch.
      * @param {function} callback - function to call back, first parameter for return value (json object) in case of success, second parameter for error object in case of error
-     * @param {string} qubic - qubic to fetch from, e.g. 'HWOUOKFZRLOLODHPUBTCKBUFPOJJJWF9PYVECCPWQ9ZFTKMXCUUUYGJH9KWEBRVNTZVQRGYVPTMXGGFVD'
+     * @param {string} qubic - qubic to fetch from, e.g. 'VHKIEGXYISCENLRDXYJCVE9DRBAIDWNO9ZNSUBSVUMJILKZQS9TLOGIXVEDPBLOXC9TIWNNKTGYRSVMCH'
      * @param {int} epoch - epoch to fetch, e.g. 4
      * @param {int} [epoch_max=-1] - if used will fetch all epochs from 'epoch' up to this value, e.g. 7
      * */
     fetch_epoch(callback, qubic, epoch, epoch_max = -1) {
         _ParameterValidator.validate_tryte_sequence(qubic, 'qubic', 81, 81);
         epoch = parseInt(epoch); _ParameterValidator.validate_integer(epoch, 'epoch', 0, 2147483647);
-        epoch_max = parseInt(epoch_max); _ParameterValidator.validate_integer(epoch_max, 'epoch_max', 0, 2147483647);
+        epoch_max = parseInt(epoch_max); _ParameterValidator.validate_integer(epoch_max, 'epoch_max', -1, 2147483647);
         this._send({'command': 'fetch_epoch', 'qubic': qubic, 'epoch': epoch, 'epoch max': epoch_max}, callback);
     }
 
     /**
      * transforms an entity (iam stream, qubic or oracle) into a string that can be imported again
      * @param {function} callback - function to call back, first parameter for return value (json object) in case of success, second parameter for error object in case of error
-     * @param {string} id - id of the entity to export, e.g. 'AHGGDVCDQ9CDLVUMCKJLVUKBJABLYOZXJAPUUMALHISEIMQXIYW9GVMEKGBOEZT99NSDLUGWKODGLTUKA'
+     * @param {string} id - id of the entity to export, e.g. 'XICAFNBTPPKQWQIXTTLI9RHKOPZVOFMXHCHW9ZXZJIHVLQQLBVXJUSZDFVAVGU9DWSPYTJCOZQCRNTMFN'
      * */
     export(callback, id) {
         _ParameterValidator.validate_tryte_sequence(id, 'id', 81, 81);
@@ -97,7 +98,7 @@ class Qlite {
     /**
      * Reads the specification of any qubic, thus allows the user to analyze that qubic.
      * @param {function} callback - function to call back, first parameter for return value (json object) in case of success, second parameter for error object in case of error
-     * @param {string} qubic - id of the qubic to read, e.g. 'ZTNZAZQDYOHHJGQHOSETNHQFMQEUZCHGRXFSBAMIIOQLFZCPAXWLGMOOHVUAP9WAHY9FYGZJ9RRCAYI9C'
+     * @param {string} qubic - id of the qubic to read, e.g. 'OLGAJCFRZOEWWUARGLBIEHTWBFYE9JPEHPV9OQ9HVTYYK9PYXYVPK9TUQALQTWFDHZRPRDLDJOVVOCJ9E'
      * */
     qubic_read(callback, qubic) {
         _ParameterValidator.validate_tryte_sequence(qubic, 'qubic', 81, 81);
@@ -133,17 +134,17 @@ class Qlite {
     /**
      * Removes a qubic from the persistence (private key will be deleted: cannot be undone).
      * @param {function} callback - function to call back, first parameter for return value (json object) in case of success, second parameter for error object in case of error
-     * @param {string} qubic_handle - deletes the qubic that starts with this tryte sequence, e.g. 'TB'
+     * @param {string} qubic - deletes the qubic that starts with this tryte sequence, e.g. 'RAIPQUYSILFUZARTEEHRRVQCBJAKRPXZKMYVV9ADBKWCDAYSKMYQYPBFCNYQLGFWRTGCLJEIANISQUSZK'
      * */
-    qubic_delete(callback, qubic_handle) {
-        _ParameterValidator.validate_tryte_sequence(qubic_handle, 'qubic_handle', 1, 81);
-        this._send({'command': 'qubic_delete', 'qubic handle': qubic_handle}, callback);
+    qubic_delete(callback, qubic) {
+        _ParameterValidator.validate_tryte_sequence(qubic, 'qubic', 81, 81);
+        this._send({'command': 'qubic_delete', 'qubic': qubic}, callback);
     }
 
     /**
      * Lists all incoming oracle applications for a specific qubic, response can be used for 'qubic_assembly_add'.
      * @param {function} callback - function to call back, first parameter for return value (json object) in case of success, second parameter for error object in case of error
-     * @param {string} qubic - the qubic of which you want to list all applications, e.g. 'BAOTUVLTJIMXRXJJOINVZMX9ZFVTMTIIUHDRCFETLEMTN9QGNUCVTLSAWKSK99BEVARVSNOXAJI9HAGWS'
+     * @param {string} qubic - the qubic of which you want to list all applications, e.g. 'DU99JPUNKGDZCZGEUGPZT9YHQPXNTPGVJJIJSUAJZJY9HQNIUOMQBIUYHJLEJSZUGGORNBPVDLBHBKHGH'
      * */
     qubic_list_applications(callback, qubic) {
         _ParameterValidator.validate_tryte_sequence(qubic, 'qubic', 81, 81);
@@ -153,13 +154,13 @@ class Qlite {
     /**
      * Publishes the assembly transaction for a specific qubic.
      * @param {function} callback - function to call back, first parameter for return value (json object) in case of success, second parameter for error object in case of error
-     * @param {string} qubic_handle - the qubic that shall publish its assembly transaction, e.g. 'YV'
-     * @param {array} assembly - json array of the oracle IDs to be part of the assembly, e.g. ['OMRN9RY9CNSFDYIAYJKESOJELJULVHXNYEHDVYMLZHLBIOQPAKTLUSPZKQINADLOGWSHBMYQSIFLJWDKE', 'EJPVFPLHAFWDIYZZJIVHBUM9EXPCW9PVZHSHRXRFGAXPBBLM9ROM9OD9VNRGE9XMUDAOSASCARYEBBAUQ']
+     * @param {string} qubic - the qubic that shall publish its assembly transaction, e.g. 'NZTWHHLZZ9EVS9AG9VYSDZFVGYKUYQFQBHGIPHJPBBM9CIURNYGLMVSAOWLEAWOFY9RRCIXDFZIYWOOHQ'
+     * @param {array} assembly - json array of the oracle IDs to be part of the assembly, e.g. ['MDYVHGJFWTMMXXCLBWZ9FDGSHVBWCMAMUWDPXBEJI9XKBSDBFHKMERDFNKUJBNCSDQZQHSWAQUZWUFKWX', 'QFVZZHIHBVBIHODMWVMJZEULKIZQRWHQ9LAFGOW9AKIQIFM9AXEGBPYCUWNTGVPTNWWSVNYOKAODNNXXO']
      * */
-    qubic_assemble(callback, qubic_handle, assembly) {
-        _ParameterValidator.validate_tryte_sequence(qubic_handle, 'qubic_handle', 1, 81);
+    qubic_assemble(callback, qubic, assembly) {
+        _ParameterValidator.validate_tryte_sequence(qubic, 'qubic', 81, 81);
         _ParameterValidator.validate_array(assembly, 'assembly');
-        this._send({'command': 'qubic_assemble', 'qubic handle': qubic_handle, 'assembly': assembly}, callback);
+        this._send({'command': 'qubic_assemble', 'qubic': qubic, 'assembly': assembly}, callback);
     }
 
     /**
@@ -175,9 +176,23 @@ class Qlite {
     }
 
     /**
+     * Determines the quorum based consensus of a qubic's oracle assembly at any IAM index.
+     * @param {function} callback - function to call back, first parameter for return value (json object) in case of success, second parameter for error object in case of error
+     * @param {string} qubic - qubic to find consensus in, e.g. 'OUJHCJMSCOJEYMUZOGHTGTMRIPQEFPSBQEOPDW9SBXRIIUTBSUOSVFQBDEZHJAWGABOUSGFKOT9WCDVB9'
+     * @param {string} keyword - keyword of the iam index to find consensus for, e.g. 'F'
+     * @param {int} position - position of the iam index to find consensus for, e.g. 4
+     * */
+    qubic_consensus(callback, qubic, keyword, position) {
+        _ParameterValidator.validate_tryte_sequence(qubic, 'qubic', 81, 81);
+        _ParameterValidator.validate_tryte_sequence(keyword, 'keyword', 0, 30);
+        position = parseInt(position); _ParameterValidator.validate_integer(position, 'position', 0, 2147483647);
+        this._send({'command': 'qubic_consensus', 'qubic': qubic, 'keyword': keyword, 'position': position}, callback);
+    }
+
+    /**
      * Creates a new oracle and stores it in the persistence. Life cycle will run automically, no more actions required from here on.
      * @param {function} callback - function to call back, first parameter for return value (json object) in case of success, second parameter for error object in case of error
-     * @param {string} qubic - ID of the qubic which shall be processed by this oracle., e.g. 'PPHKMMGSVQXYOZYCXSPBXWFWKVNKYFDJUJKKWTX9CIHZKAVBCQIRVXSWPOBE9XJGPJKBEQSLHXYKAQCVI'
+     * @param {string} qubic - ID of the qubic which shall be processed by this oracle., e.g. 'WNGYNTJLXTQL9CYQWYI9HWFSWSEDYVNPCQWQNWENO9ZSTCHD9CSMOAFQECDKCIJJRQIDBWHQPBFDHUMTS'
      * */
     oracle_create(callback, qubic) {
         _ParameterValidator.validate_tryte_sequence(qubic, 'qubic', 81, 81);
@@ -187,7 +202,7 @@ class Qlite {
     /**
      * Removes an oracle from the persistence (private key will be deleted, cannot be undone).
      * @param {function} callback - function to call back, first parameter for return value (json object) in case of success, second parameter for error object in case of error
-     * @param {string} id - oracle ID, e.g. 'WSQFTXBAIAQAXVDYYRDHOGSGMSHCOBCTVNAKKIVHYGQ9THEPJOETBGXJBOREKRHZGBPOXILOBFBTKQEVI'
+     * @param {string} id - oracle ID, e.g. 'RN9NESFXZEJAPKBTTLQJZELEVBZPJKOVKOOFWLZBUPZLWHDIFKJEIGOYBWMLRIFRVCJRVZKXPHXDZWSDG'
      * */
     oracle_delete(callback, id) {
         _ParameterValidator.validate_tryte_sequence(id, 'id', 81, 81);
@@ -205,7 +220,7 @@ class Qlite {
     /**
      * Temporarily stops an oracle from processing its qubic after the epoch finishes. Can be undone with 'oracle_restart'.
      * @param {function} callback - function to call back, first parameter for return value (json object) in case of success, second parameter for error object in case of error
-     * @param {string} id - oracle ID, e.g. 'PAQJPGPQYQGEBKVAUTFHIRZIPVJZGNTKLTPJMIW9WLBSNMCZTYPZBZFCDHKPHVVRB9OGCJNMBGKKRYNAJ'
+     * @param {string} id - oracle ID, e.g. 'FRNDPXCCAUGXJLFVSTLJG9YABR9YDFPUNBQQVCAZRUFEJSKLIRFR9ALKNTWVKPKYMVNIXUULDDRLX9RNW'
      * */
     oracle_pause(callback, id) {
         _ParameterValidator.validate_tryte_sequence(id, 'id', 81, 81);
@@ -215,7 +230,7 @@ class Qlite {
     /**
      * Restarts an oracle that was paused with 'oracle_pause', makes it process its qubic again.
      * @param {function} callback - function to call back, first parameter for return value (json object) in case of success, second parameter for error object in case of error
-     * @param {string} id - oracle ID, e.g. 'VTJISTOQRLGAROVEIXQ9LUWKUEVILJLGEIWTLTXRESFOQHROXDUISCG9WETEIYOJ9HSUUNNASWORECXQN'
+     * @param {string} id - oracle ID, e.g. 'PBAISESJJRFC9PEMOGMKKIJNEXUNSMLZEAKZHRBBGDXZHBGLBGKHNIJWGUISFLHOSSIWOBTYVCRMRANAY'
      * */
     oracle_restart(callback, id) {
         _ParameterValidator.validate_tryte_sequence(id, 'id', 81, 81);
@@ -295,13 +310,12 @@ class Qlite {
     /**
      * Uninstalls an app.
      * @param {function} callback - function to call back, first parameter for return value (json object) in case of success, second parameter for error object in case of error
-     * @param {string} app - app ID (directory name in 'qapps'), e.g. 'tanglefarm'
+     * @param {string} app - app ID (directory name in 'qlweb/qlweb-0.4.0/qapps'), e.g. 'tanglefarm'
      * */
     app_uninstall(callback, app) {
         _ParameterValidator.validate_alphanumeric(app, 'app');
         this._send({'command': 'app_uninstall', 'app': app}, callback);
     }
-
 }
 
 /**

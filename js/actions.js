@@ -37,7 +37,7 @@ function error_wrap_object (object) {
             object[x] = error_wrap_method(object[x]);
         }
     }
-};
+}
 
 function handle_error(err) {
     toastr.error(err);
@@ -112,6 +112,20 @@ function fetch_epoch() {
         }
 
     }, qubic, min_epoch, max_epoch);
+}
+
+function qubic_consensus() {
+
+    block_form("#window_qco form")
+
+    const qubic = $('#form_qco_qubic').val();
+    const keyword = $('#form_qco_keyword').val();
+    const position = $('#form_qco_position').val();
+
+    QLITE.qubic_consensus(function (res, err) {
+        unblock_form('#window_qco form');
+        $('#window_qco .box').html(res['result']);
+    }, qubic, keyword, position);
 }
 
 function qubic_read() {
