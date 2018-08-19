@@ -365,11 +365,15 @@ function list_qubics() {
                 const epoch_age = time_running % epoch_duration;
                 const $bar = $('#qubic_' + qubic['id'] + " .progress_bar .bar");
 
-                $bar.css("width", (epoch_age / epoch_duration * 100)+"%");
-                $bar.animate({ width: "100%", }, (epoch_duration-epoch_age) * 1000, "linear");
+                if(spec['execution_start']*1000 < new Date()) {
+                    $bar.css("width", (epoch_age / epoch_duration * 100)+"%");
+                    $bar.animate({ width: "100%", }, (epoch_duration-epoch_age) * 1000, "linear");
+                } else {
+                    $bar.css("width", "0%");
+                }
 
                 var epoch = Math.floor(time_running/epoch_duration);
-                $('#qubic_' + qubic['id'] + ' .epoch').html(epoch);
+                $('#qubic_' + qubic['id'] + ' .epoch').html(epoch >= 0 ? epoch : " - ");
             };
 
             $QUBIC_SCROLL.append(generate_qubic_box(qubic));
@@ -379,7 +383,7 @@ function list_qubics() {
                 unregister_interval(qubic['id']);
                 register_interval(qubic['id'], correct_progress_bar, epoch_duration*1000);
                 correct_progress_bar();
-            }, (epoch_duration-epoch_age)*1000+200);
+            }, Math.max((epoch_duration-epoch_age)*1000+200, spec['execution_start']*1000-new Date()+200));
 
             correct_progress_bar();
         });
