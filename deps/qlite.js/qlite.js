@@ -1,4 +1,4 @@
-const API_VERSION = "0.4.0";
+const API_VERSION = "0.4.1";
 
 class Qlite {
 
