@@ -186,7 +186,10 @@
 		<div class="window_body">
 			<form>
 				<input type="text" placeholder="iam stream id" id="form_ir_iam_id" class="big" />
-				<input type="number" placeholder="index" id="form_ir_index" />
+                <div class="input_line">
+                    <input type="number" placeholder="index position" id="form_ir_index_position" />
+                    <input type="text" placeholder="index keyword (optional)" id="form_ir_index_keyword" />
+                </div>
 				<input type="button" value="read from stream" onclick="iam_read();" />
 			</form>
 			<div class="box code"></div>
@@ -203,7 +206,10 @@
 		<div class="window_body">
 			<form>
 				<input type="text" disabled id="form_iw_iam_id" class="big" />
-				<input type="number" placeholder="index" id="form_iw_index" />
+                <div class="input_line">
+                    <input type="number" placeholder="index position" id="form_iw_index_position" />
+                    <input type="text" placeholder="index keyword (optional)" id="form_iw_index_keyword" />
+                </div>
 				<textarea id="form_iw_message" placeholder="message (json object)"></textarea>
 				<input type="button" value="write to stream" onclick="iam_write();" />
 			</form>

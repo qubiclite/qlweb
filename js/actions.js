@@ -54,6 +54,8 @@ list_oracles();
 list_qubics();
 }, 60000);
 
+$('input').attr("autocomplete", "off");
+
 window.onerror = function(err) {
     toastr.error(err);
 };
@@ -124,7 +126,7 @@ function qubic_consensus() {
 
     QLITE.qubic_consensus(function (res, err) {
         unblock_form('#window_qco form');
-        $('#window_qco .box').html(res['result']);
+        $('#window_qco .box').html(res['result'] != null ? res['result'] : "");
     }, qubic, keyword, position);
 }
 
@@ -139,13 +141,13 @@ function qubic_read() {
         unblock_form('#window_qr form');
         if(err) return;
 
-        var es = res['execution_start'];
-        var hpd = res['hash_period_duration'];
-        var rpd = res['result_period_duration'];
-        var rl = res['runtime_limit'];
+        const es = res['execution_start'];
+        const hpd = res['hash_period_duration'];
+        const rpd = res['result_period_duration'];
+        const rl = res['runtime_limit'];
 
-        var running = Math.round(new Date().getTime()/1000-es);
-        var epoch = Math.floor(running / (hpd+rpd));
+        const running = Math.round(new Date().getTime()/1000-es);
+        const epoch = Math.floor(running / (hpd+rpd));
 
         var text = "VERSION:          " + res['version'];
         text += "<br/>EXECUTION START:  " + unix_to_date(es) + " ("+running+"s, UNIX: "+es+(epoch < 0 ? ")" : ", EPOCH: #"+epoch+")");
@@ -169,8 +171,9 @@ function iam_read() {
     $box.html("");
     block_form('#window_ir form');
 
-    var iam_id = $('#form_ir_iam_id').val();
-    var index = parseInt($('#form_ir_index').val());
+    const iam_id = $('#form_ir_iam_id').val();
+    const index_position = parseInt($('#form_ir_index_position').val());
+    const index_keyword = $('#form_ir_index_keyword').val();
 
     QLITE.iam_read(function (resp, err) {
         if(resp)
@@ -178,7 +181,7 @@ function iam_read() {
         if(err)
             toastr.warning("error");
         unblock_form('#window_ir form');
-    }, iam_id, index);
+    }, iam_id, index_position, index_keyword);
 }
 
 function iam_list() {
@@ -193,7 +196,7 @@ function iam_list() {
 }
 
 function oracle_create() {
-    var qubic = $('#form_oc_qubic_id').val();
+    const qubic = $('#form_oc_qubic_id').val();
 
     block_form('#window_oc form');
     QLITE.oracle_create(function (res, err) {
@@ -206,7 +209,8 @@ function oracle_create() {
 function iam_write() {
 
     var id = $('#form_iw_iam_id').val();
-    var index = parseInt($('#form_iw_index').val());
+    var index_position = parseInt($('#form_iw_index_position').val());
+    var index_keyword = $('#form_iw_index_keyword').val();
     var message;
 
     try {
@@ -220,7 +224,7 @@ function iam_write() {
     QLITE.iam_write(function (res, err) {
         close_window("iw");
         unblock_form('#window_iw form');
-    }, id, index, message);
+    }, id, index_position, message, index_keyword);
 }
 
 function qubic_test() {
